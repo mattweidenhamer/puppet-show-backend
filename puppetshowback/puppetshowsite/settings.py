@@ -156,9 +156,10 @@ MEDIA_URL = "/media/"
 MEDIA_ROOT = os.path.join(BASE_DIR, "media/")
 
 
-CORS_ALLOWED_ORIGINS = ["http://localhost:3000"]
+MAIN_WEBSITE_URL = "http://3.13.108.33:3000/"
+CORS_ALLOWED_ORIGINS = [MAIN_WEBSITE_URL]
 
 AUTH_USER_MODEL = "puppetshowapp.DiscordPointingUser"
 AUTH_USER_MODEL_MANAGER = "puppetshowapp.DiscordPointingUserManager"
 
-MAIN_WEBSITE_URL = "http://localhost:3000"
+
