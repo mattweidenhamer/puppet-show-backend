@@ -1,6 +1,6 @@
 from django.http import HttpResponse, JsonResponse, Http404
 from django.contrib.auth.decorators import login_required
-from ..models import Outfit, Scene, DiscordPointingUser, DiscordData
+from ..models import Outfit, Scene, DiscordPointingUser
 from ..serializers import (
     OutfitSerializer,
     SceneSerializer,

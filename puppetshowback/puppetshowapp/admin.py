@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
-from .models import DiscordData, Scene, Outfit, DiscordPointingUser
+from .models import Scene, Outfit, DiscordPointingUser
 from .forms import *
 
 
@@ -32,16 +32,6 @@ class CustomUserAdmin(BaseUserAdmin):
         ),
     )
     add_fieldsets = ((None, {"fields": ("discord_snowflake",)}),)
-
-
-@admin.register(DiscordData)
-class DiscordDataAdmin(admin.ModelAdmin):
-    fieldsets = [
-        (
-            "Discord Info",
-            {"fields": ["user_snowflake", "user_discriminator"]},
-        ),
-    ]
 
 
 @admin.register(Scene)

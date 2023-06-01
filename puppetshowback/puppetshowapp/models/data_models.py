@@ -15,21 +15,21 @@ def user_outfit_path(instance, filename):
 
 
 # The user's snowflake, Discord Name, and any other neccesary parts
-# REBUILD: unsure of the future of this model.
-class DiscordData(models.Model):
-    user_snowflake = models.CharField(max_length=20)
-    user_username = models.CharField(max_length=100)
-    user_discriminator = models.CharField(max_length=4)
+# OLD DATA, should not be needed again
+# class  DiscordData(models.Model):
+#     user_snowflake = models.CharField(max_length=20)
+#     user_username = models.CharField(max_length=100)
+#     user_discriminator = models.CharField(max_length=4)
 
-    # TODO if we every start capturing profile pictures
-    # To obtain: Get query cdn.discordapp.com/avatars/{user_snowflake}/user_avatar.png
-    profile_picture = models.ImageField(upload_to=user_pfp_path)
+#     # TODO if we every start capturing profile pictures
+#     # To obtain: Get query cdn.discordapp.com/avatars/{user_snowflake}/user_avatar.png
+#     profile_picture = models.ImageField(upload_to=user_pfp_path)
 
-    def __str__(self) -> str:
-        return str(self.user_username)
+#     def __str__(self) -> str:
+#         return str(self.user_username)
 
-    class Meta:
-        db_table = "discord_user_data"
+#     class Meta:
+#         db_table = "discord_user_data"
 
 
 # An outfit's animation

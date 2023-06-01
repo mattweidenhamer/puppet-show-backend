@@ -1,12 +1,9 @@
-from ..models.authentication_models import DiscordPointingUser
-from ..models.data_models import DiscordData
 from ..models.configuration_models import Outfit, Scene
 from ..serializers import *
 from ..permissions import IsObjectOwner, HasValidToken
 
-from django.http import JsonResponse, HttpResponse, Http404
-from rest_framework import viewsets, status, mixins, generics, response
-from rest_framework.views import APIView
+from django.http import JsonResponse, Http404
+from rest_framework import status, generics
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.response import Response
 from rest_framework.authtoken.models import Token

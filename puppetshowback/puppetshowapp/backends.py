@@ -1,5 +1,5 @@
 from django.contrib.auth.backends import BaseBackend
-from .models import DiscordPointingUser, DiscordData
+from .models import DiscordPointingUser
 from .secrets.constants import (
     DISCORD_CLIENT_ID,
     DISCORD_CLIENT_SECRET,
@@ -42,19 +42,16 @@ class DiscordAuthBackend(BaseBackend):
             return None
         discord_id = user_data["id"]
         try:
-            user = DiscordPointingUser.objects.get(
-                discord_data__user_snowflake=discord_id
-            )
+            user = DiscordPointingUser.objects.get(discord_snowflake=discord_id)
         except DiscordPointingUser.DoesNotExist:
-            try:
-                discord_data_obj = DiscordData.objects.get(user_snowflake=discord_id)
-            except DiscordData.DoesNotExist:
-                discord_data_obj = DiscordData.objects.create(
-                    user_snowflake=discord_id,
-                    user_username=user_data["username"],
-                    user_discriminator=user_data["discriminator"],
-                )
-            user = DiscordPointingUser.objects.create(discord_data=discord_data_obj)
+            user = (
+                DiscordPointingUser.objects.create(
+                    discord_snowflake=discord_id,
+                    discord_username=user_data["username"],
+                    discord_auth_token=access_token,
+                    discord_refresh_token=token_data["refresh_token"],
+                ),
+            )
         return user
 
     def get_user(self, user_id):
