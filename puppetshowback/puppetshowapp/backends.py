@@ -7,6 +7,7 @@ from .secrets.constants import (
     DISCORD_AUTH_TOKEN_URL,
     DISCORD_USERS_REDIRECT,
 )
+from django.conf import settings
 import requests
 
 
@@ -14,8 +15,8 @@ class DiscordAuthBackend(BaseBackend):
     def authenticate(self, request):
         code = request.GET.get("code")
         data = {
-            "client_id": DISCORD_CLIENT_ID,
-            "client_secret": DISCORD_CLIENT_SECRET,
+            "client_id": settings.DISCORD["CLIENT_ID"],
+            "client_secret": settings.DISCORD["CLIENT_SECRET"],
             "grant_type": "authorization_code",
             "code": code,
             "redirect_uri": DISCORD_USERS_REDIRECT,
@@ -23,7 +24,7 @@ class DiscordAuthBackend(BaseBackend):
         headers = {"Content-Type": "application/x-www-form-urlencoded"}
         try:
             token_exchange_response = requests.post(
-                DISCORD_AUTH_TOKEN_URL, data=data, headers=headers, timeout=4
+                settings.DISCORD["URLS"]["TOKEN"], data=data, headers=headers, timeout=4
             )
             token_exchange_response.raise_for_status()
         except Exception as e:
@@ -32,7 +33,7 @@ class DiscordAuthBackend(BaseBackend):
         access_token = token_data["access_token"]
         try:
             response = requests.get(
-                f"{API_ENDPOINT}/users/@me",
+                f"{settings.DISCORD['URLS']['API_ENDPOINT']}/users/@me",
                 headers={"Authorization": f"Bearer {access_token}"},
                 timeout=4,
             )

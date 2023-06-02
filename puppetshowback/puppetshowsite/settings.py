@@ -11,6 +11,13 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 import os
 from pathlib import Path
+import environ
+
+# SECURITY WARNING: don't run with debug turned on in production!
+DEBUG = True
+
+env = environ.Env()
+environ.Env.read_env()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -20,10 +27,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-!c(&zc$rk#_+pymkh1ji-ive-8pem3zj8cnu!aij9qjr(82_u0"
+SECRET_KEY = env("SECRET_KEY")
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
 
 ALLOWED_HOSTS = []
 
@@ -42,7 +47,6 @@ INSTALLED_APPS = [
     "rest_framework",
     "rest_framework.authtoken",
     "corsheaders",
-    # "oauth2_provider",  # TODO phase out
 ]
 
 MIDDLEWARE = [
@@ -54,7 +58,6 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    # "oauth2_provider.middleware.OAuth2TokenMiddleware",
 ]
 
 ROOT_URLCONF = "puppetshowsite.urls"
@@ -81,13 +84,23 @@ WSGI_APPLICATION = "puppetshowsite.wsgi.application"
 
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
-
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+DATABASES = (
+    {
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": BASE_DIR / "db.sqlite3",
+        }
     }
-}
+    if DEBUG
+    else {
+        "default": {
+            "ENGINE": "django.db.backends.mysql",
+            "OPTIONS": {
+                "read_default_file": os.path.join(BASE_DIR, "secrets", "db.cnf")
+            },
+        }
+    }
+)
 
 
 # Password validation
@@ -155,9 +168,59 @@ REST_FRAMEWORK = {
 MEDIA_URL = "/media/"
 MEDIA_ROOT = os.path.join(BASE_DIR, "media/")
 
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "loggers": {
+        "": {
+            "level": "DEBUG",
+            "handlers": ["console", "file"],
+        },
+    },
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler",
+            "level": "INFO",
+            "formatter": "simple",
+        },
+        "file": {
+            "class": "logging.FileHandler",
+            "filename": "debug.log",
+            "level": "DEBUG",
+            "formatter": "verbose",
+        },
+    },
+    "formatters": {
+        "verbose": {
+            "format": "{name} {levelname} {asctime} {module} {process:d} {thread:d} {message}",
+            "style": "{",
+        },
+        "simple": {
+            "format": "{levelname} {message}",
+            "style": "{",
+        },
+    },
+}
+
 
 MAIN_WEBSITE_URL = "http://3.13.108.33:3000/"
 CORS_ALLOWED_ORIGINS = ["http://localhost:3000", "http://3.13.108.33:3000"]
 
 AUTH_USER_MODEL = "puppetshowapp.DiscordPointingUser"
 AUTH_USER_MODEL_MANAGER = "puppetshowapp.DiscordPointingUserManager"
+
+FRONTEND = env("FRONTEND_DEBUG") if DEBUG else env("FRONTEND_PROD")
+BACKEND = env("BACKEND_DEBUG") if DEBUG else env("BACKEND_PROD")
+
+DISCORD = {
+    "URLS": {
+        "AUTH": env("AUTH_URL"),
+        "TOKEN": env("TOKEN_URL"),
+        "API_ENDPOINT": env("API_ENDPOINT"),
+        "OAUTH": env("OAUTH_URL"),
+        "CALLBACK": f"{BACKEND}/callback/",
+    },
+    "CLIENT_ID": env("CLIENT_ID"),
+    "CLIENT_SECRET": env("CLIENT_SECRET"),
+    "BOT_TOKEN": env("BOT_TOKEN"),
+}

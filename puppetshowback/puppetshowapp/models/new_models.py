@@ -1,11 +1,8 @@
 from django.db import models
 from .authentication_models import DiscordPointingUser
 import uuid
-from ..secrets.constants import API_ENDPOINT
-from django.dispatch import receiver
-from django.db.models.signals import pre_init
+from django.conf import settings
 import requests
-from ..secrets.constants import DISCORD_BOT_TOKEN
 from ..constants import DEFAULT_PERFORMER_SETTINGS
 
 
@@ -32,13 +29,13 @@ class Performer(models.Model):
     def get_owner(self):
         return self.parent_user
 
+    # Why is this here?
     def request_update_user_info(self, save=True):
-        url = API_ENDPOINT + f"/users/{self.discord_snowflake}"
-        headers = {"Authorization": f"Bot {DISCORD_BOT_TOKEN}"}
-        response = requests.get(
-            url,
-            headers=headers,
+        url = (
+            f"{settings.DISCORD['URLS']['API_ENDPOINT']}/users/{self.discord_snowflake}"
         )
+        headers = {"Authorization": f"Bot {settings.DISCORD['BOT_TOKEN']}"}
+        response = requests.get(url, headers=headers, timeout=4)
         if response.status_code == 200:
             response_json = response.json()
             self.discord_username = response_json["username"]

@@ -1,27 +1,20 @@
 from django.http import JsonResponse, HttpResponse
 from django.shortcuts import redirect
-from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import logout
+from django.conf import settings
 from ..models.authentication_models import DiscordPointingUser
 from rest_framework import status
 from rest_framework.authtoken.models import Token
 import requests
 import logging
-from ..secrets.constants import (
-    DISCORD_OAUTH_URL,
-    DISCORD_CLIENT_ID,
-    DISCORD_CLIENT_SECRET,
-    API_ENDPOINT,
-    DISCORD_AUTH_TOKEN_URL,
-    DISCORD_USERS_REDIRECT,
-    FRONTEND_REDIRECT,
-)
-import secrets
+
+logger = logging.getLogger(__name__)
 
 
 # This should be called to redirect the user to Discord's login page
 # For testing purposes. In production this should be called from the frontend.
 def login_redirect_discord(request):
-    return redirect(DISCORD_OAUTH_URL)
+    return redirect(settings.DISCORD["URLS"]["AUTH"])
 
 
 def discord_user_callback(request):
@@ -31,7 +24,7 @@ def discord_user_callback(request):
     if isinstance(user, DiscordPointingUser):
         # TODO implement django-rest-knox for better tokening.
         token, created = Token.objects.get_or_create(user=user)
-        redirect_url = f"{FRONTEND_REDIRECT}?token={token.key}"
+        redirect_url = f"{settings.FRONTEND}/receive-token/?token={token.key}"
         return redirect(redirect_url)
     else:
         logging.error("Got abnormal user from request.")
@@ -42,16 +35,16 @@ def discord_user_callback(request):
 def exchange_code_for_token(request):
     code = request.GET.get("code")
     data = {
-        "client_id": DISCORD_CLIENT_ID,
-        "client_secret": DISCORD_CLIENT_SECRET,
+        "client_id": settings.DISCORD["CLIENT_ID"],
+        "client_secret": settings.DISCORD["CLIENT_SECRET"],
         "grant_type": "authorization_code",
         "code": code,
-        "redirect_uri": DISCORD_USERS_REDIRECT,
+        "redirect_uri": settings.DISCORD["URLS"]["CALLBACK"],
     }
     headers = {"Content-Type": "application/x-www-form-urlencoded"}
     try:
         token_exchange_response = requests.post(
-            DISCORD_AUTH_TOKEN_URL, data=data, headers=headers, timeout=4
+            settings.DISCORD["URLS"]["TOKEN"], data=data, headers=headers, timeout=4
         )
         token_exchange_response.raise_for_status()
     except requests.HTTPError as e:
@@ -61,7 +54,7 @@ def exchange_code_for_token(request):
     access_token = token_data["access_token"]
     try:
         response = requests.get(
-            f"{API_ENDPOINT}/users/@me",
+            f"{settings.DISCORD['URLS']['API_ENDPOINT']}/users/@me",
             headers={"Authorization": f"Bearer {access_token}"},
             timeout=4,
         )

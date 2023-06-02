@@ -1,10 +1,14 @@
-from django.db import models
-from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 import uuid
 import logging
 import requests
-from ..secrets.constants import DISCORD_CLIENT_ID, DISCORD_CLIENT_SECRET
+from django.conf import settings
+from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
+from django.db import models
+
+
 from rest_framework.authtoken.models import Token
+
+logger = logging.getLogger(__name__)
 
 
 class DiscordPointingUserManager(BaseUserManager):
@@ -120,13 +124,13 @@ class DiscordPointingUser(AbstractBaseUser):
     def refresh_token(self):
         API_ENDPOINT = "https://discord.com/api/v10/oauth2/token"
         data = {
-            "client_id": DISCORD_CLIENT_ID,
-            "client_secret": DISCORD_CLIENT_SECRET,
+            "client_id": settings.DISCORD["CLIENT_ID"],
+            "client_secret": settings.DISCORD["CLIENT_SECRET"],
             "grant_type": "refresh_token",
             "refresh_token": self.discord_refresh_token,
         }
         headers = {"Content-Type": "application/x-www-form-urlencoded"}
-        r = requests.post(url=API_ENDPOINT, data=data, headers=headers)
+        r = requests.post(url=API_ENDPOINT, data=data, headers=headers, timeout=4)
         try:
             r.raise_for_status()
             response = r.json()
@@ -134,10 +138,10 @@ class DiscordPointingUser(AbstractBaseUser):
             self.discord_refresh_token = response["refresh_token"]
             self.save()
         except requests.exceptions.HTTPError as e:
-            logging.error(f"Error refreshing token for user {self.login_username}")
-            logging.error(e)
-            logging.error("Response text: " + r.text)
-            logging.error("Revoking token for user" + self.discord_username)
+            logger.error(f"Error refreshing token for user {self.login_username}")
+            logger.error(e)
+            logger.error("Response text: " + r.text)
+            logger.error("Revoking token for user" + self.discord_username)
             Token.objects.delete(user=self)
 
     def make_user_get_request(self, url):
