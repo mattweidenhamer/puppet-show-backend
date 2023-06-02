@@ -10,8 +10,10 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 import os
-from pathlib import Path
 import environ
+from datetime import datetime
+from pathlib import Path
+
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -184,8 +186,9 @@ LOGGING = {
             "formatter": "simple",
         },
         "file": {
-            "class": "logging.FileHandler",
-            "filename": "debug.log",
+            "class": "logging.handlers.TimedRotatingFileHandler",
+            "filename": f"{os.path.join('logs', datetime.now().strftime('%Y-%m-%d %H-%M-%S'))}.log",
+            "when": "midnight",
             "level": "DEBUG",
             "formatter": "verbose",
         },
