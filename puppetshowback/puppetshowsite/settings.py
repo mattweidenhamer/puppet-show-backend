@@ -20,7 +20,9 @@ environ.Env.read_env()
 
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = env("DEBUG")
+DEBUG = env("DEBUG") in ["True", "true", "TRUE", "1"]
+
+assert (DEBUG is False) or (DEBUG is True), "DEBUG must be a boolean value"
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
