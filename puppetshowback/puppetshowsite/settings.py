@@ -11,10 +11,12 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 import os
 import environ
+import logging
 from datetime import datetime
 from pathlib import Path
 
-import logging
+os.makedirs(os.path.dirname("./logs/"), exist_ok=True)
+
 
 logger = logging.getLogger(__name__)
 
@@ -25,7 +27,7 @@ environ.Env.read_env()
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env("DEBUG") in ["True", "true", "TRUE", "1"]
 if DEBUG:
-    logger.warn("DEBUG is True! Running in development mode.")
+    logger.warn("EnVar DEBUG is True! Running in development mode.")
 
 assert (DEBUG is False) or (DEBUG is True), "DEBUG must be a boolean value"
 
