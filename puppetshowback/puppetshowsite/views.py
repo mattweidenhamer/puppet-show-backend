@@ -5,4 +5,4 @@ from . import settings
 
 class RedirectToMainPageView(View):
     def get(self, request):
-        return redirect(settings.MAIN_WEBSITE_URL)
+        return redirect(settings.FRONTEND)

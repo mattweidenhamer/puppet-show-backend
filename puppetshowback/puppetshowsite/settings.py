@@ -218,7 +218,6 @@ LOGGING = {
 }
 
 
-MAIN_WEBSITE_URL = "http://3.13.108.33:3000/"
 CORS_ALLOWED_ORIGINS = ["http://localhost:3000", "http://3.13.108.33:3000"]
 
 AUTH_USER_MODEL = "puppetshowapp.DiscordPointingUser"
@@ -232,7 +231,7 @@ DISCORD = {
         "AUTH": env("AUTH_URL"),
         "TOKEN": env("TOKEN_URL"),
         "API_ENDPOINT": env("API_ENDPOINT"),
-        "OAUTH": env("OAUTH_URL"),
+        "OAUTH": env("DEBUG_OAUTH_URL") if DEBUG else env("PROD_OAUTH_URL"),
         "CALLBACK": f"{BACKEND}/callback/",
     },
     "CLIENT_ID": env("CLIENT_ID"),
