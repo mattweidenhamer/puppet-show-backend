@@ -48,6 +48,7 @@ def exchange_code_for_token(request):
         )
         token_exchange_response.raise_for_status()
     except requests.HTTPError as e:
+        logger.error(e)
         if e.response.status_code == 401:
             return e
     token_data = token_exchange_response.json()
