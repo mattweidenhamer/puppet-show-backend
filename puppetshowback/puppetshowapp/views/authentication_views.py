@@ -41,7 +41,7 @@ def exchange_code_for_token(request):
         "code": code,
         "redirect_uri": settings.DISCORD["URLS"]["CALLBACK"],
     }
-    print(data["redirect_uri"])
+    logging.info(data)
     headers = {"Content-Type": "application/x-www-form-urlencoded"}
     try:
         token_exchange_response = requests.post(
