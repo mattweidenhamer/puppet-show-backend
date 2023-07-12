@@ -237,5 +237,4 @@ DISCORD = {
     "CLIENT_ID": env("CLIENT_ID"),
     "CLIENT_SECRET": env("CLIENT_SECRET"),
     "BOT_TOKEN": env("BOT_TOKEN"),
-}
-logger.warn(f"{DISCORD}")
+}       
