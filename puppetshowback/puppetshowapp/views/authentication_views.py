@@ -46,6 +46,7 @@ def exchange_code_for_token(request):
         token_exchange_response = requests.post(
             settings.DISCORD["URLS"]["TOKEN"], data=data, headers=headers, timeout=4
         )
+        logger.info(token_exchange_response.text)
         token_exchange_response.raise_for_status()
     except requests.HTTPError as e:
         logger.error(e)
