@@ -238,3 +238,5 @@ DISCORD = {
     "CLIENT_SECRET": env("CLIENT_SECRET"),
     "BOT_TOKEN": env("BOT_TOKEN"),
 }
+for key, value in DISCORD["URLS"]:
+    logger.warn(f"Discord {key}: {value}")
