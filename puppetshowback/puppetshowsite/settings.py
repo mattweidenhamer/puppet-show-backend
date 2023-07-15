@@ -230,7 +230,7 @@ DISCORD = {
         "TOKEN": env("TOKEN_URL"),
         "API_ENDPOINT": env("API_ENDPOINT"),
         "OAUTH": env("DEBUG_OAUTH_URL") if DEBUG else env("PROD_OAUTH_URL"),
-        "CALLBACK": f"{BACKEND}callback/",
+        "CALLBACK": f"{BACKEND}/callback/",
     },
     "CLIENT_ID": env("CLIENT_ID"),
     "CLIENT_SECRET": env("CLIENT_SECRET"),
