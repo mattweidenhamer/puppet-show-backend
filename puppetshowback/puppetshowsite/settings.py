@@ -218,8 +218,6 @@ LOGGING = {
 }
 
 
-CORS_ALLOWED_ORIGINS = ["http://localhost:3000", "http://3.13.108.33:3000"]
-
 AUTH_USER_MODEL = "puppetshowapp.DiscordPointingUser"
 AUTH_USER_MODEL_MANAGER = "puppetshowapp.DiscordPointingUserManager"
 
@@ -237,4 +235,5 @@ DISCORD = {
     "CLIENT_ID": env("CLIENT_ID"),
     "CLIENT_SECRET": env("CLIENT_SECRET"),
     "BOT_TOKEN": env("BOT_TOKEN"),
-}       
+}
+CORS_ALLOWED_ORIGINS = ["http://localhost:3000", "http://3.13.108.33:3000", FRONTEND]
