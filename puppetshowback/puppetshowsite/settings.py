@@ -236,4 +236,9 @@ DISCORD = {
     "CLIENT_SECRET": env("CLIENT_SECRET"),
     "BOT_TOKEN": env("BOT_TOKEN"),
 }
-CORS_ALLOWED_ORIGINS = ["http://localhost:3000", "http://3.13.108.33:3000", FRONTEND]
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",
+    "http://3.13.108.33:3000",
+    FRONTEND,
+    BACKEND,
+]
