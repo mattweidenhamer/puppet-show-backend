@@ -22,9 +22,8 @@ from .views import RedirectToMainPageView
 
 urlpatterns = [
     path("", RedirectToMainPageView.as_view()),
-    path("admin/", admin.site.urls),
+    path("admin-pages/", admin.site.urls),
     path("ps/", include("puppetshowapp.urls")),
-    # TODO phase out
     path("login/", authentication_views.login_redirect_discord),
     path(
         "callback/", authentication_views.discord_user_callback, name="token-exchange"
