@@ -1,22 +1,20 @@
 from django.urls import reverse
 from rest_framework.test import (
-    APIRequestFactory,
     APIClient,
     APITestCase,
-    force_authenticate,
 )
 from rest_framework.authtoken.models import Token
 from unittest.mock import MagicMock, Mock, patch
 import requests
 
-from ..models.authentication_models import DiscordPointingUser
-from ..models.configuration_models import Scene, Outfit
-from ..models.new_models import Performer
-from ..models.data_models import Animation
-from ..constants import DEFAULT_SCENE_SETTINGS, DEFAULT_OUTFIT_SETTINGS
+from puppetshowapp.models.authentication_models import DiscordPointingUser
+from puppetshowapp.models.configuration_models import Scene, Outfit
+from puppetshowapp.models.new_models import Performer
+from puppetshowapp.models.data_models import Animation
+from puppetshowapp.constants import DEFAULT_SCENE_SETTINGS, DEFAULT_OUTFIT_SETTINGS
 
 
-from ..secrets.test_raw import RAW_ME, FAKE_RAW_TOKEN
+from puppetshowapp.secrets.test_raw import RAW_ME, FAKE_RAW_TOKEN
 
 
 class UserEndpointTestCase(APITestCase):

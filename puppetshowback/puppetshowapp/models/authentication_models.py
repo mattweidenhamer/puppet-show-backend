@@ -25,22 +25,14 @@ class DiscordPointingUserManager(BaseUserManager):
 
 
 class DiscordPointingUser(AbstractBaseUser):
-    # TODO add components and function neccesary for token refreshing
+    # TODO re-evaluate use of storing tokens in the database. ATM the use case is nonexistant.
     login_username = models.CharField(max_length=25, unique=True)
     uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     discord_snowflake = models.CharField(max_length=25, unique=True)
     discord_username = models.CharField(max_length=30)
 
-    # discord_data = models.OneToOneField(
-    #     DiscordData, on_delete=models.DO_NOTHING, related_name="user_discord_data"
-    # )
-
     is_superuser = models.BooleanField(default=False)
     created_date = models.DateTimeField(auto_now_add=True)
-
-    # added_users = models.ManyToManyField(
-    #     DiscordData, blank=True, related_name="added_users"
-    # )
 
     discord_auth_token = models.CharField(max_length=100)
     discord_refresh_token = models.CharField(max_length=100)

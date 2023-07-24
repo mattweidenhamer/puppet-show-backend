@@ -190,6 +190,15 @@ class StageSerializer(serializers.ModelSerializer):
         ]
 
 
+class StageSerializerCustomOutfit(serializers.Serializer):
+    outfit = OutfitSerializerForPerformer(read_only=True)
+    performer = PerformerSerializer(read_only=True)
+
+    class Meta:
+        model = Performer
+        fields = ("outfit",)
+
+
 # TODO: Considier making this more succinct so tha the user's active scene isn't called twice.
 class UserSerializer(serializers.ModelSerializer):
     scenes = SceneSerializer(many=True, required=False, read_only=True)

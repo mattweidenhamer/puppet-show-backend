@@ -50,7 +50,6 @@ urlpatterns = [
         model_views.PerformerDetail.as_view(),
         name="performer-detail",
     ),
-    # TODO not restful
     path(
         "scenes/<uuid:identifier>/setActive/",
         model_views.SetActiveScene.as_view(),
@@ -60,5 +59,10 @@ urlpatterns = [
         "stage/<uuid:identifier>/",
         model_views.PerformanceView.as_view(),
         name="stage-performance",
+    ),
+    path(
+        "stage/<uuid:identifier>/<uuid:outfit_identifier>/",
+        model_views.PerformanceSpecificOutfitView.as_view(),
+        name="stage-performance-specific-outfit",
     ),
 ]

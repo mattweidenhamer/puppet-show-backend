@@ -4,6 +4,7 @@ from ..permissions import IsObjectOwner, HasValidToken
 
 from django.http import JsonResponse, Http404
 from rest_framework import status, generics
+from rest_framework.views import APIView
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
@@ -128,6 +129,35 @@ class PerformanceView(generics.RetrieveAPIView):
     queryset = Performer.objects.all()
     serializer_class = StageSerializer
     lookup_field = "identifier"
+
+
+class PerformanceSpecificOutfitView(APIView):
+    queryset = Performer.objects.all()
+    serializer_class = StageSerializer
+    lookup_field = "identifier"
+
+    def get(self, request, identifier, outfit_identifier):
+        try:
+            performer = Performer.objects.get(identifier=identifier)
+            outfit = Outfit.objects.get(identifier=outfit_identifier)
+        except Performer.DoesNotExist:
+            return Response(
+                status=status.HTTP_404_NOT_FOUND,
+                data={"message": "Performer not found."},
+            )
+        except Outfit.DoesNotExist:
+            return Response(
+                status=status.HTTP_404_NOT_FOUND,
+                data={"message": "Outfit not found."},
+            )
+        if outfit.parent_user != performer.parent_user:
+            return Response(
+                status=status.HTTP_403_FORBIDDEN,
+                data={"message": "Outfit does not belong to this performer."},
+            )
+
+        serializer = StageSerializer(performer)
+        return Response(serializer.data)
 
 
 class SetActiveScene(generics.CreateAPIView):

@@ -31,9 +31,7 @@ class Performer(models.Model):
 
     # Why is this here?
     def request_update_user_info(self, save=True):
-        url = (
-            f"{settings.DISCORD['URLS']['API_ENDPOINT']}/users/{self.discord_snowflake}"
-        )
+        url = f"{settings.DISCORD.get('URLS').get('API_ENDPOINT')}/users/{self.discord_snowflake}"
         headers = {"Authorization": f"Bot {settings.DISCORD['BOT_TOKEN']}"}
         response = requests.get(url, headers=headers, timeout=4)
         if response.status_code == 200:
