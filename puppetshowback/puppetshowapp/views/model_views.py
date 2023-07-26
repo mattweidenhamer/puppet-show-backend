@@ -150,7 +150,7 @@ class PerformanceSpecificOutfitView(APIView):
                 status=status.HTTP_404_NOT_FOUND,
                 data={"message": "Outfit not found."},
             )
-        if outfit.parent_user != performer.parent_user:
+        if outfit.get_owner != performer.parent_user:
             return Response(
                 status=status.HTTP_403_FORBIDDEN,
                 data={"message": "Outfit does not belong to this performer."},
