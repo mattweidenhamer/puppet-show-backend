@@ -131,12 +131,17 @@ class PerformanceView(generics.RetrieveAPIView):
     lookup_field = "identifier"
 
 
-class PerformanceSpecificOutfitView(APIView):
+class PerformanceSpecificOutfitView(generics.RetrieveAPIView):
     queryset = Performer.objects.all()
-    serializer_class = StageSerializer
+    serializer_class = StageSerializerCustomOutfit
     lookup_field = "identifier"
 
     def get(self, request, identifier, outfit_identifier):
+        if not identifier or not outfit_identifier:
+            return Response(
+                status=status.HTTP_400_BAD_REQUEST,
+                data={"message": "Both identifiers are required."},
+            )
         try:
             performer = Performer.objects.get(identifier=identifier)
             outfit = Outfit.objects.get(identifier=outfit_identifier)
@@ -155,8 +160,14 @@ class PerformanceSpecificOutfitView(APIView):
                 status=status.HTTP_403_FORBIDDEN,
                 data={"message": "Outfit does not belong to this performer."},
             )
-
-        serializer = StageSerializer(performer)
+        outfit_obj = Outfit.objects.get(identifier=outfit_identifier)
+        serializer = self.serializer_class(performer, context={"outfit": outfit_obj})
+        # Change the get_outfit value of the serializer to the passed outfit
+        # if not serializer.is_valid():
+        #     return Response(
+        #         status=status.HTTP_400_BAD_REQUEST,
+        #         data={"message": f"Invalid data: {serializer.errors}"},
+        #     )
         return Response(serializer.data)
 
 

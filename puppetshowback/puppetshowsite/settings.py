@@ -27,7 +27,7 @@ environ.Env.read_env()
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env("DEBUG") in ["True", "true", "TRUE", "1"]
 if DEBUG:
-    logger.warn("EnVar DEBUG is True! Running in development mode.")
+    logger.warning("EnVar DEBUG is True! Running in development mode.")
 
 assert (DEBUG is False) or (DEBUG is True), "DEBUG must be a boolean value"
 
@@ -42,7 +42,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = env("SECRET_KEY")
 
 
-ALLOWED_HOSTS = ["puppetshow.site", "discord.com"]
+ALLOWED_HOSTS = []
 
 
 # Application definition
@@ -165,10 +165,6 @@ AUTHENTICATION_BACKENDS = (
 )
 
 SITE_ID = 1
-# ACCOUNT_EMAIL_REQUIRED = True
-# ACCOUNT_SESSION_REMEMBER = True
-# ACCOUNT_AUTHENTICATION_METHOD = "email"
-# ACCOUNT_UNIQUE_EMAIL = True
 
 REST_FRAMEWORK = {
     "DATETIME_FORMAT": "%m/%d/%y %I:%M%P",

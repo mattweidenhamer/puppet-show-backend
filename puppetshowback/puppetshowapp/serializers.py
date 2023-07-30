@@ -172,6 +172,9 @@ class PerformerSerializer(serializers.ModelSerializer):
 class StageSerializer(serializers.ModelSerializer):
     get_outfit = OutfitSerializerForPerformer(read_only=True)
 
+    def get_outfit_value(self, obj):
+        return obj.get_outfit()
+
     class Meta:
         model = Performer
         fields = (
@@ -190,13 +193,14 @@ class StageSerializer(serializers.ModelSerializer):
         ]
 
 
-class StageSerializerCustomOutfit(serializers.Serializer):
-    outfit = OutfitSerializerForPerformer(read_only=True)
-    performer = PerformerSerializer(read_only=True)
+class StageSerializerCustomOutfit(StageSerializer):
+    get_outfit = serializers.SerializerMethodField(read_only=True)
 
-    class Meta:
-        model = Performer
-        fields = ("outfit",)
+    def get_get_outfit(self, obj):
+        context = self.context
+        return OutfitSerializerForPerformer(
+            instance=context["outfit"], read_only=True
+        ).data
 
 
 # TODO: Considier making this more succinct so tha the user's active scene isn't called twice.

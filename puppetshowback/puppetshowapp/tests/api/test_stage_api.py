@@ -107,7 +107,7 @@ class StageEndpointTestCase(APITestCase):
     def test_get_stage_with_specific_outfit(self):
         url = reverse(
             "stage-performance-specific-outfit",
-            args=[self.performer.identifier, self.outfit_3.identifier],
+            args=[self.performer.identifier, self.outfit.identifier],
         )
         client = APIClient()
         response = client.get(url)
@@ -115,7 +115,7 @@ class StageEndpointTestCase(APITestCase):
         self.assertIsNotNone(response.content)
         response_dict = response.json()
         self.assertEqual(response_dict["discord_snowflake"], "6969420")
-        self.assertEqual(response_dict["get_outfit"]["outfit_name"], "test_outfit_3")
+        self.assertEqual(response_dict["get_outfit"]["outfit_name"], "test_outfit")
         # Check to make sure that a user cant access an outfit of another performer.
         url = reverse(
             "stage-performance-specific-outfit",
@@ -123,6 +123,9 @@ class StageEndpointTestCase(APITestCase):
         )
         response = client.get(url)
         self.assertEqual(response.status_code, 403)
+        self.assertEqual(
+            response.json()["message"], "Outfit does not belong to this performer."
+        )
         # Check to make sure that a user cant access an outfit that doesn't exist.
         url = reverse(
             "stage-performance-specific-outfit",
@@ -130,3 +133,12 @@ class StageEndpointTestCase(APITestCase):
         )
         response = client.get(url)
         self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.json()["message"], "Outfit not found.")
+        # Check to make sure that a user cant access a performer that doesn't exist.
+        url = reverse(
+            "stage-performance-specific-outfit",
+            args=[uuid.uuid4(), self.outfit.identifier],
+        )
+        response = client.get(url)
+        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.json()["message"], "Performer not found.")
